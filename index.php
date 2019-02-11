@@ -27,12 +27,10 @@ function main() {
     }
     else {
         if (isset($_POST['answer'])) {
-            $success = $challengeMaster->validateAnswer($_POST['answer']);
+            $challengeMaster->validateAnswer($_POST['answer']);
 
-            if ($success) {
-                header('Location: index.php');
-                die("Well done! You should be redirected to <a href='/index.php'>the next challenge</a>.");
-            }
+            header('Location: index.php');
+            die("You should be redirected to <a href='/index.php'>the next challenge</a>.");
         }
 
         $challenge = $challengeMaster->getCurrentChallenge();
