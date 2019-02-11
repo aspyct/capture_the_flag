@@ -3,10 +3,10 @@
 session_start();
 define('BODY_INCLUDE_PATH', __DIR__ . '/challenges/body/');
 
-function autoload($className) {
+spl_autoload_register(function ($className) {
     $expectedFilename = __DIR__ . '/domain/' . $className . '.php';
     require_once($expectedFilename);
-}
+});
 
 function render(string $_template, array $vars = []): string {
     extract($vars);
@@ -40,5 +40,4 @@ function main() {
     }
 }
 
-spl_autoload_register('autoload');
 main();
