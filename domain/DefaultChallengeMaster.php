@@ -1,33 +1,34 @@
 <?php
 class DefaultChallengeMaster implements \ChallengeMaster {
-    private $currentChallengeOffset;
+    private $sessionHandle;
     private $challengeList;
     
-    public function __construct(...$challengeList) {
-        $this->currentChallengeOffset = 0;
+    public function __construct(SessionHandle $sessionHandle, $challengeList) {
+        $this->sessionHandle = $sessionHandle;
         $this->challengeList = $challengeList;
     }
     
     public function getCurrentChallenge(): \Challenge {
-        return $this->challengeList[$this->currentChallengeOffset];
+        return $this->challengeList[$this->getCurrentChallengeOffset()];
     }
 
-    public function exportSession() {
-        
-    }
-
-    public function recoverSession($contestant) {
-        
-    }
-
-    public function submitAnswer(string $answer): bool {
+    public function validateAnswer(string $answer): bool {
         $challenge = $this->getCurrentChallenge();
         
         if ($challenge->validate($answer)) {
-            $this->currentChallengeOffset += 1;
+            $this->incrementChallengeOffset();
             return true;
         }
         
         return false;
+    }
+    
+    private function getCurrentChallengeOffset(): int {
+        return $this->sessionHandle->getValue(0);
+    }
+    
+    private function incrementChallengeOffset() {
+        $currentOffset = $this->getCurrentChallengeOffset();
+        $this->sessionHandle->setValue($currentOffset + 1);
     }
 }

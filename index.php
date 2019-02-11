@@ -15,16 +15,21 @@ function render(Challenge $challenge): string {
 }
 
 function main() {
-    $challengeMaster = require('./challenges/definitions.php');
-    $challengeMaster->recoverSession($_SESSION['contestant']);
+    $challengeList = require('./challenges/definitions.php');
+    $sessionHandle = new SimpleSessionHandle('DefaultChallengeMaster');
+    
+    $challengeMaster = new DefaultChallengeMaster($sessionHandle, $challengeList);
 
     if (isset($_POST['answer'])) {
-        $challengeMaster->submitAnswer($_POST['answer']);
+        $success = $challengeMaster->validateAnswer($_POST['answer']);
+        
+        if ($success) {
+            header('Location: index.php');
+            die("Well done! You should be redirected to <a href='/index.php'>the next challenge</a>.");
+        }
     }
 
     $challenge = $challengeMaster->getCurrentChallenge();
-
-    $_SESSION['contestant'] = $challengeMaster->exportSession();
     
     echo render($challenge);
 }
