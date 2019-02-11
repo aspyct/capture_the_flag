@@ -23,6 +23,10 @@ class DefaultChallengeMaster implements \ChallengeMaster {
         return false;
     }
     
+    public function isFinished(): bool {
+        return $this->sessionHandle->getValue() >= count($this->challengeList);
+    }
+    
     private function getCurrentChallengeOffset(): int {
         return $this->sessionHandle->getValue(0);
     }

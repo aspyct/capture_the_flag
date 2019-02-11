@@ -12,5 +12,6 @@
             <input type="text" name="answer" placeholder="<?php echo $challenge->getAnswerPlaceholder(); ?>"/>
             <input type="submit" value="Submit" />
         </form>
+        <a href="/reset.php">Reset</a>
     </body>
 </html>

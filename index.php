@@ -8,9 +8,11 @@ function autoload($className) {
     require_once($expectedFilename);
 }
 
-function render(Challenge $challenge): string {
+function render(string $_template, array $vars = []): string {
+    extract($vars);
+    
     ob_start();
-    include('./templates/form.php');
+    include('./templates/' . $_template . '.php');
     return ob_get_clean();
 }
 
@@ -19,19 +21,25 @@ function main() {
     $sessionHandle = new SimpleSessionHandle('DefaultChallengeMaster');
     
     $challengeMaster = new DefaultChallengeMaster($sessionHandle, $challengeList);
-
-    if (isset($_POST['answer'])) {
-        $success = $challengeMaster->validateAnswer($_POST['answer']);
-        
-        if ($success) {
-            header('Location: index.php');
-            die("Well done! You should be redirected to <a href='/index.php'>the next challenge</a>.");
-        }
-    }
-
-    $challenge = $challengeMaster->getCurrentChallenge();
     
-    echo render($challenge);
+    if ($challengeMaster->isFinished()) {
+        echo render('success');
+    }
+    else {
+        if (isset($_POST['answer'])) {
+            $success = $challengeMaster->validateAnswer($_POST['answer']);
+
+            if ($success) {
+                header('Location: index.php');
+                die("Well done! You should be redirected to <a href='/index.php'>the next challenge</a>.");
+            }
+        }
+
+        $challenge = $challengeMaster->getCurrentChallenge();
+        echo render('form', [
+            'challenge' => $challenge
+        ]);
+    }
 }
 
 spl_autoload_register('autoload');
